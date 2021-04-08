@@ -1,8 +1,8 @@
 
 from flask import render_template
 
-from . import app
-from .database import Item
+from src import app
+from src.database import Item
 
 @app.route('/')
 def home_page():
