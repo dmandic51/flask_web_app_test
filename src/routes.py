@@ -29,9 +29,15 @@ def home_page():
 @login_required
 def market_page():
     purchase_form = PurchaseItemForm()
+    selling_form = SellItemForm()
+
     if request.method == 'POST':
         purchased_item = request.form.get('purchased_item')
+        sold_item = request.form.get('sold_item')
+
         purchased_item = Item.query.filter_by(name=purchased_item).first()
+        sold_item = Item.query.filter_by(name=sold_item).first()
+
         if purchased_item and current_user.can_purchase(purchased_item):
             purchased_item.buy(current_user)
             flash(f'Congratulations you purchased {purchased_item.name} for {purchased_item.price}$.',
@@ -39,11 +45,23 @@ def market_page():
         elif purchased_item:
             flash(f'You don\'t have enough money to purchase {purchased_item.name} for {purchased_item.price}$.',
                   category='danger')
+        elif sold_item and current_user.can_sell(sold_item):
+            sold_item.sell(current_user)
+            flash(f'Congratulations you purchased {sold_item.name} for {sold_item.price}$.',
+                  category='success')
+        elif sold_item:
+            flash(f'You don\'t own the item {sold_item.name}.',
+                  category='danger')
         return redirect(url_for('market_page'))
 
     if request.method == 'GET':
         items = Item.query.filter_by(owner=None)
-        return render_template('market.html', items=items, purchase_form=purchase_form)
+        owned_items = Item.query.filter_by(owner=current_user.id)
+        return render_template('market.html',
+                               items=items,
+                               purchase_form=purchase_form,
+                               owned_items=owned_items,
+                               selling_form=selling_form)
 
 
 @app.route('/register', methods=['GET', 'POST'])
