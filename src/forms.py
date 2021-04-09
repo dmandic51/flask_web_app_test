@@ -6,6 +6,7 @@ from flask_wtf import FlaskForm
 
 from src.database import User
 
+
 class RegisterForm(FlaskForm):
 
     def validate_username(self, username_to_check):  ## FlaskForm specific behaviour
@@ -18,9 +19,15 @@ class RegisterForm(FlaskForm):
         if email.first():
             raise ValidationError('Email already in use.')
 
-    username = StringField(label='User name:', validators=[Length(min=2, max=30), DataRequired()])
+    username = StringField(label='Username:', validators=[Length(min=2, max=30), DataRequired()])
     email_address = StringField(label='Email address:', validators=[Email(), DataRequired()])
     password_initial = PasswordField(label='Password:', validators=[Length(min=6), DataRequired()])
     password_confirmation = PasswordField(label='Confirm password:',
                                           validators=[EqualTo('password_initial'), DataRequired()])
     submit = SubmitField(label='Create Account')
+
+
+class LoginForm(FlaskForm):
+    username = StringField(label='Username:', validators=[DataRequired()])
+    password = StringField(label='Password:', validators=[DataRequired()])
+    submit = SubmitField(label='Sign in')
