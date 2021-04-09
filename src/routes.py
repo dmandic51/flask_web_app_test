@@ -11,6 +11,8 @@ from src.forms import RegisterForm
 from src.forms import LoginForm
 
 from flask_login import login_user
+from flask_login import logout_user
+from flask_login import login_required
 
 
 @app.route('/')
@@ -20,6 +22,7 @@ def home_page():
 
 
 @app.route('/market')
+@login_required
 def market_page():
     items = Item.query.all()
     return render_template('market.html', items=items)
@@ -34,6 +37,8 @@ def register_page():
                               password=form.password_initial.data)
         db.session.add(user_to_create)
         db.session.commit()
+        login_user(user_to_create)
+        flash(f'Account created successfully! You are now logged in as: {user_to_create.username}', category='success')
 
         market_page_url = url_for('market_page')
         return redirect(market_page_url)
@@ -58,3 +63,10 @@ def login_page():
             flash('Invalid username / password.', category='danger')
 
     return render_template('login.html', form=form)
+
+
+@app.route('/logout')
+def logout_page():
+    logout_user()
+    flash('You have been logged out.', category='info')
+    return redirect(url_for('home_page'))

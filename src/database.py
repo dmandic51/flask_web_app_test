@@ -16,8 +16,12 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(length=30), nullable=False, unique=True)
     email_address = db.Column(db.String(length=50), nullable=False, unique=True)
     password_hash = db.Column(db.String(length=60), nullable=False)
-    budget = db.Column(db.Integer(), nullable=False, default=1000)
+    budget = db.Column(db.Integer(), nullable=False, default=1500)
     items = db.relationship('Item', backref='owned_user', lazy=True)
+
+    @property
+    def prettier_budget(self):
+        return f'{self.budget:,}$'
 
     @property
     def password(self):
@@ -25,7 +29,7 @@ class User(db.Model, UserMixin):
 
     @password.setter
     def password(self, plain_text_password):
-        self.password = bcrypt.generate_password_hash(plain_text_password).decode('utf-8')
+        self.password_hash = bcrypt.generate_password_hash(plain_text_password).decode('utf-8')
 
     def check_password(self, attempted_password):
         return bcrypt.check_password_hash(self.password_hash, attempted_password)
@@ -43,9 +47,12 @@ class Item(db.Model):
         return f'Item {self.name}'
 
 
-def populate_db(items):
+def populate_db(items, users):
     db.create_all()
     for item in items:
         db_item = Item(**item)
+        db.session.add(db_item)
+    for user in users:
+        db_item = User(**user)
         db.session.add(db_item)
     db.session.commit()

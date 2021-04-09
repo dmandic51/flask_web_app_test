@@ -11,12 +11,12 @@ class RegisterForm(FlaskForm):
 
     def validate_username(self, username_to_check):  ## FlaskForm specific behaviour
         user = User.query.filter_by(username=username_to_check.data)
-        if user.first():
+        if user and user.first():
             raise ValidationError('Username already exists.')
 
     def validate_email_address(self, email_to_check):
-        email =  User.query.filter_by(email_address=email_to_check.data)
-        if email.first():
+        email = User.query.filter_by(email_address=email_to_check.data)
+        if email and email.first():
             raise ValidationError('Email already in use.')
 
     username = StringField(label='Username:', validators=[Length(min=2, max=30), DataRequired()])
