@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='./node_modules/bootstrap/dist/css/bootstrap.min.css')}}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <title>
         {% block title %}
@@ -70,9 +70,9 @@
 {% block content %}
 
 {% endblock %}
-<script src="../node_modules/jquery/dist/jquery.slim.min.js"></script>
-<script src="../node_modules/@popperjs/core/dist/umd/popper.min.js"></script>
-<script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="{{ url_for('static', filename='./node_modules/jquery/dist/jquery.slim.min.js')}}"></script>
+<script src="{{ url_for('static', filename='./node_modules/@popperjs/core/dist/umd/popper.js')}}"></script>
+<script src="{{ url_for('static', filename='./node_modules/bootstrap/dist/js/bootstrap.min.js')}}"></script>
 </body>
 <style>
     body {
