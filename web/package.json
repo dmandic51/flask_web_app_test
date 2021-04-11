@@ -1,0 +1,21 @@
+{
+  "name": "flask_web_app_test",
+  "version": "1.0.0",
+  "description": "Playing around with flask and web.",
+  "dependencies": {
+    "@popperjs/core": "^2.9.2",
+    "bootstrap": "^5.0.0-beta3",
+    "jquery": "^3.6.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dmandic51/flask_web_app_test.git"
+  },
+  "author": "Denis Mandic",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dmandic51/flask_web_app_test/issues"
+  },
+  "homepage": "https://github.com/dmandic51/flask_web_app_test#readme"
+}
