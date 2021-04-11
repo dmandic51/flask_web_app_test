@@ -9,7 +9,7 @@ from src.database import User
 
 class RegisterForm(FlaskForm):
 
-    def validate_username(self, username_to_check):  ## FlaskForm specific behaviour
+    def validate_username(self, username_to_check):
         user = User.query.filter_by(username=username_to_check.data)
         if user and user.first():
             raise ValidationError('Username already exists.')

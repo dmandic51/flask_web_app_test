@@ -4,7 +4,6 @@ from flask import request
 from flask import redirect
 from flask import render_template
 
-from src import db
 from src import app
 from src.database import Item
 from src.database import User
@@ -32,26 +31,7 @@ def market_page():
     selling_form = SellItemForm()
 
     if request.method == 'POST':
-        purchased_item = request.form.get('purchased_item')
-        sold_item = request.form.get('sold_item')
-
-        purchased_item = Item.query.filter_by(name=purchased_item).first()
-        sold_item = Item.query.filter_by(name=sold_item).first()
-
-        if purchased_item and current_user.can_purchase(purchased_item):
-            purchased_item.buy(current_user)
-            flash(f'Congratulations you purchased {purchased_item.name} for {purchased_item.price}$.',
-                  category='success')
-        elif purchased_item:
-            flash(f'You don\'t have enough money to purchase {purchased_item.name} for {purchased_item.price}$.',
-                  category='danger')
-        elif sold_item and current_user.can_sell(sold_item):
-            sold_item.sell(current_user)
-            flash(f'Congratulations you purchased {sold_item.name} for {sold_item.price}$.',
-                  category='success')
-        elif sold_item:
-            flash(f'You don\'t own the item {sold_item.name}.',
-                  category='danger')
+        sell_and_purchase_items()
         return redirect(url_for('market_page'))
 
     if request.method == 'GET':
@@ -64,17 +44,34 @@ def market_page():
                                selling_form=selling_form)
 
 
+def sell_and_purchase_items():
+    purchased_item = request.form.get('purchased_item')
+    purchased_item = Item.query.filter_by(name=purchased_item).first()
+
+    sold_item = request.form.get('sold_item')
+    sold_item = Item.query.filter_by(name=sold_item).first()
+
+    if purchased_item and current_user.can_purchase(purchased_item):
+        purchased_item.buy(current_user)
+        flash(f'Congratulations you purchased {purchased_item.name} for {purchased_item.price}$.', category='success')
+    elif purchased_item:
+        flash(f'You don\'t have enough money to purchase {purchased_item.name} for {purchased_item.price}$.', category='danger')
+    elif sold_item and current_user.can_sell(sold_item):
+        sold_item.sell(current_user)
+        flash(f'Congratulations you purchased {sold_item.name} for {sold_item.price}$.', category='success')
+    elif sold_item:
+        flash(f'You don\'t own the item {sold_item.name}.', category='danger')
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register_page():
     form = RegisterForm()
     if form.validate_on_submit():
-        user_to_create = User(username=form.username.data,
-                              email_address=form.email_address.data,
-                              password=form.password_initial.data)
-        db.session.add(user_to_create)
-        db.session.commit()
-        login_user(user_to_create)
-        flash(f'Account created successfully! You are now logged in as: {user_to_create.username}', category='success')
+        created_user = User(username=form.username.data,
+                            email_address=form.email_address.data,
+                            password=form.password_initial.data)
+        login_user(created_user)
+        flash(f'Account created successfully! You are now logged in as: {created_user.username}', category='success')
 
         market_page_url = url_for('market_page')
         return redirect(market_page_url)

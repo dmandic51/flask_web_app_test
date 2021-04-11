@@ -19,6 +19,11 @@ class User(db.Model, UserMixin):
     budget = db.Column(db.Integer(), nullable=False, default=1500)
     items = db.relationship('Item', backref='owned_user', lazy=True)
 
+    def __init__(self, *args, **kwargs):
+        super(User, self).__init__(*args, **kwargs)
+        db.session.add(self)
+        db.session.commit()
+
     @property
     def prettier_budget(self):
         return f'{self.budget:,}$'
